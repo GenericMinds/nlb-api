@@ -3,15 +3,18 @@ import uuid
 import boto3
 import os
 import logging
+import humps
 
 from botocore.client import BaseClient
 from botocore.exceptions import ClientError
 from layers.shared.nlb_common.response_service import create_response
 from models.file_meta_data import FileMetaData
+from models.file_presigned_response import FilePresignedResponse
 
 
 def handler(event, context):
     body = json.loads(event['body'])
+    body = humps.decamelize(body)
     file_data = FileMetaData(**body)
     response = _get_presigned_url(file_data)
     return create_response(response, 201)
@@ -36,7 +39,4 @@ def _get_presigned_url(file_data: FileMetaData):
     except ClientError as e:
         logging.error(e)
         return "Encountered an error while generating presigned url"
-    return {
-        'assetId': asset_id,
-        'presignedUrl': presigned_url
-    }
+    return FilePresignedResponse(asset_id=asset_id, presigned_url=presigned_url)
