@@ -1,4 +1,4 @@
-import json
+import ujson
 
 from dataclasses import asdict, is_dataclass
 from humps import camelize
@@ -19,5 +19,5 @@ def create_response(body, status: int = 200):
             'Content-Type': 'application/json'
         },
         'statusCode': status,
-        'body': json.dumps(body),
+        'body': ujson.dumps(body),
     }

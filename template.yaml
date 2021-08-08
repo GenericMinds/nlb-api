@@ -1,15 +1,12 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
-  nlb-api
+  NoLuvBeats API
 
-  Serverless API for NLB
+  Serverless API for NoLuvBeats
 
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
-  Api:
-    BinaryMediaTypes:
-      - application~1zip
   Function:
     Timeout: 300
     Runtime: python3.8
@@ -17,23 +14,47 @@ Globals:
       Variables:
         ASSET_BUCKET: nlb-site-assets
 
+
 Resources:
-  InitiateUploadFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+  NoLuvBeatsAPI:
+    Type: 'AWS::Serverless:Api'
     Properties:
-      CodeUri: functions/initiate_upload
+      StageName: Prod
+
+  ExampleFunction:
+    Type: 'AWS::Serverless::Function' # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: functions/example
       Handler: app.handler
       Layers:
         - !Ref SharedLayer
       Events:
-        BeatUpload:
+        ExampleAPI:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            Path: /api/initiate-upload
-            Method: post
-  SharedLayer:
-    Type: AWS::Serverless::LayerVersion
+            RestApiId: !Ref NoLuvBeatsAPI
+            Path: '/api/example'
+            Method: GET
+
+  AssetInitiateFunction:
+    Type: 'AWS::Serverless::Function' # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
+      CodeUri: functions/asset/initiate
+      Handler: app.handler
+      Layers:
+        - !Ref SharedLayer
+      Events:
+        InitiateUploadAPI:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            RestApiId: !Ref NoLuvBeatsAPI
+            Path: '/api/initiate-upload'
+            Method: POST
+
+  SharedLayer:
+    Type: 'AWS::Serverless::LayerVersion'
+    Properties:
+      LayerName: nlb-api-shared-layer
       ContentUri: layers/shared
       CompatibleRuntimes:
         - python3.8
@@ -44,9 +65,9 @@ Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
   # Find out more about other implicit resources you can reference within SAM
   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
-  NlbApi:
-    Description: "API Gateway endpoint URL for Prod stage for Hello World function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
+  NoLuvBeatsAPI:
+    Description: "API Gateway endpoint URL for Prod stage"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/api/initiate-upload"
   BeatUploadFunction:
     Description: "Initiate Upload Lambda Function ARN"
     Value: !GetAtt InitiateUploadFunction.Arn

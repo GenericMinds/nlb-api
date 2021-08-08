@@ -7,11 +7,16 @@ from botocore.exceptions import ClientError
 
 
 def handler(event, context):
-    body = json.loads(event['body'])
+    #body = json.loads(event['body'])
+
+    # response = {
+    #     'message': 'hello world',
+    #     'upload': body['upload']
+    # }
 
     response = {
         'message': 'hello world',
-        'upload': body['upload']
+        'upload': 'this is a test'
     }
 
     return {

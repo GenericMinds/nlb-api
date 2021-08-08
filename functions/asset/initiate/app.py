@@ -1,4 +1,4 @@
-import json
+import ujson
 import uuid
 import boto3
 import os
@@ -8,16 +8,23 @@ import humps
 from botocore.client import BaseClient
 from botocore.exceptions import ClientError
 from layers.shared.nlb_common.response_service import create_response
-from models.file_meta_data import FileMetaData
-from models.file_presigned_response import FilePresignedResponse
+from utils.models import FileMetaData, FilePresignedResponse, FileMetaDataSchema
 
 
 def handler(event, context):
-    body = json.loads(event['body'])
+    body = ujson.loads(event['body'])
     body = humps.decamelize(body)
-    file_data = FileMetaData(**body)
-    response = _get_presigned_url(file_data)
-    return create_response(response, 201)
+
+    schema = FileMetaDataSchema()
+
+    # Check if dictionary is empty.
+    is_valid = not bool(schema.validate(body))
+
+    if is_valid:
+        response = _get_presigned_url(FileMetaData(**body))
+        return create_response(response, 201)
+    else:
+        return create_response(schema.validate(body), 400)
 
 
 def _get_presigned_url(file_data: FileMetaData):
