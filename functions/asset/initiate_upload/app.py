@@ -7,7 +7,7 @@ import humps
 
 from botocore.client import BaseClient
 from botocore.exceptions import ClientError
-from layers.shared.nlb_common.response_service import create_response
+from layers.shared.utils.response_utility import create_response
 from utils.models import FileMetaData, FilePresignedResponse
 
 
