@@ -21,20 +21,20 @@ Resources:
     Properties:
       StageName: Prod
 
-  ExampleFunction:
-    Type: 'AWS::Serverless::Function' # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
-    Properties:
-      CodeUri: functions/example
-      Handler: app.handler
-      Layers:
-        - !Ref SharedLayer
-      Events:
-        ExampleAPI:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-          Properties:
-            RestApiId: !Ref NoLuvBeatsAPI
-            Path: '/api/example'
-            Method: GET
+#  ExampleFunction:
+#    Type: 'AWS::Serverless::Function' # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+#    Properties:
+#      CodeUri: functions/example
+#      Handler: app.handler
+#      Layers:
+#        - !Ref SharedLayer
+#      Events:
+#        ExampleAPI:
+#          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+#          Properties:
+#            RestApiId: !Ref NoLuvBeatsAPI
+#            Path: '/api/example'
+#            Method: GET
 
   AssetInitiateUploadFunction:
     Type: 'AWS::Serverless::Function' # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
