@@ -36,10 +36,10 @@ Resources:
             Path: '/api/example'
             Method: GET
 
-  AssetInitiateFunction:
+  AssetInitiateUploadFunction:
     Type: 'AWS::Serverless::Function' # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
-      CodeUri: functions/asset/initiate
+      CodeUri: functions/asset/initiate_upload
       Handler: app.handler
       Layers:
         - !Ref SharedLayer
@@ -67,10 +67,10 @@ Outputs:
   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
   NoLuvBeatsAPI:
     Description: "API Gateway endpoint URL for Prod stage"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/api/initiate-upload"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/api/asset-initiate-upload"
   BeatUploadFunction:
-    Description: "Initiate Upload Lambda Function ARN"
-    Value: !GetAtt InitiateUploadFunction.Arn
+    Description: "Asset Initiate Upload Lambda Function ARN"
+    Value: !GetAtt AssetInitiateUploadFunction.Arn
   BeatUploadFunctionIamRole:
-    Description: "Implicit IAM Role created for InitiateUploadFunction"
-    Value: !GetAtt InitiateUploadFunctionRole.Arn
+    Description: "Implicit IAM Role created for AssetInitiateUploadFunction"
+    Value: !GetAtt AssetInitiateUploadFunctionRole.Arn

@@ -8,23 +8,15 @@ import humps
 from botocore.client import BaseClient
 from botocore.exceptions import ClientError
 from layers.shared.nlb_common.response_service import create_response
-from utils.models import FileMetaData, FilePresignedResponse, FileMetaDataSchema
+from utils.models import FileMetaData, FilePresignedResponse
 
 
 def handler(event, context):
     body = ujson.loads(event['body'])
     body = humps.decamelize(body)
-
-    schema = FileMetaDataSchema()
-
-    # Check if dictionary is empty.
-    is_valid = not bool(schema.validate(body))
-
-    if is_valid:
-        response = _get_presigned_url(FileMetaData(**body))
-        return create_response(response, 201)
-    else:
-        return create_response(schema.validate(body), 400)
+    file_data = FileMetaData(**body)
+    response = _get_presigned_url(file_data)
+    return create_response(response, 201)
 
 
 def _get_presigned_url(file_data: FileMetaData):
