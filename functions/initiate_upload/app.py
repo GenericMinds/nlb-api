@@ -21,7 +21,7 @@ def _get_presigned_url(file_data: FileMetaData):
     asset_id = uuid.uuid4().hex
     request = {
         'Bucket': os.environ['ASSET_BUCKET'],
-        'Key': f"{file_data.asset_type}/{asset_id}/{file_data.title}.zip",
+        'Key': f"{file_data.asset_type}/{asset_id}/{file_data.file_name}",
         'Metadata': {
             'title': file_data.title,
             'description': file_data.description,
