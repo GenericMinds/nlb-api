@@ -2,7 +2,6 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
   NoLuvBeats API
-
   Serverless API for NoLuvBeats
 
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
@@ -13,6 +12,7 @@ Globals:
     Environment:
       Variables:
         ASSET_BUCKET: nlb-site-assets
+        ASSET_DB_TABLE: nlb-db-asset-metadata
 
 
 Resources:
@@ -21,26 +21,14 @@ Resources:
     Properties:
       StageName: Prod
 
-#  ExampleFunction:
-#    Type: 'AWS::Serverless::Function' # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
-#    Properties:
-#      CodeUri: functions/example
-#      Handler: app.handler
-#      Layers:
-#        - !Ref SharedLayer
-#      Events:
-#        ExampleAPI:
-#          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-#          Properties:
-#            RestApiId: !Ref NoLuvBeatsAPI
-#            Path: '/api/example'
-#            Method: GET
-
   AssetInitiateUploadFunction:
     Type: 'AWS::Serverless::Function' # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       CodeUri: functions/asset/initiate_upload
       Handler: app.handler
+      Description: >-
+        A Function that generates a presigned url to be used in
+        the frontend to upload assets to nlb-site-assets.
       Layers:
         - !Ref SharedLayer
       Events:
@@ -51,11 +39,30 @@ Resources:
             Path: '/api/initiate-upload'
             Method: POST
 
+  AssetMetadataPostFunction:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      CodeUri: functions/asset/metadata_post
+      Handler: app.handler
+      Description: >-
+        A Function that retrieves metadata for the object that has
+        been updated in nlb-site-assets.
+      Events:
+        NlbSiteAssetsEvent:
+          Type: S3
+          Properties:
+            Bucket:
+              Ref: 'arn:aws:s3:::nlb-site-assets'
+            Events:
+              - 's3:ObjectCreated:*'
+
   SharedLayer:
     Type: 'AWS::Serverless::LayerVersion'
     Properties:
       LayerName: nlb-api-shared-layer
       ContentUri: layers/shared
+      Description: >-
+        A Lambda layer that contains commonly used code throughout nlb-api.
       CompatibleRuntimes:
         - python3.8
     Metadata:
@@ -67,10 +74,10 @@ Outputs:
   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
   NoLuvBeatsAPI:
     Description: "API Gateway endpoint URL for Prod stage"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/api/asset-initiate-upload"
-  BeatUploadFunction:
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/api/initiate-upload"
+  AssetInitiateUploadFunction:
     Description: "Asset Initiate Upload Lambda Function ARN"
     Value: !GetAtt AssetInitiateUploadFunction.Arn
-  BeatUploadFunctionIamRole:
+  AssetInitiateUploadFunctionIamRole:
     Description: "Implicit IAM Role created for AssetInitiateUploadFunction"
     Value: !GetAtt AssetInitiateUploadFunctionRole.Arn
