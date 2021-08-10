@@ -17,7 +17,7 @@ Globals:
 
 Resources:
   NoLuvBeatsAPI:
-    Type: 'AWS::Serverless:Api'
+    Type: 'AWS::Serverless::Api'
     Properties:
       StageName: Prod
 
@@ -32,7 +32,7 @@ Resources:
       Layers:
         - !Ref SharedLayer
       Events:
-        InitiateUploadAPI:
+        AssetInitiateUpload:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             RestApiId: !Ref NoLuvBeatsAPI
