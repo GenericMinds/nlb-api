@@ -47,6 +47,9 @@ Resources:
       Description: >-
         A Function that retrieves asset data for the object that has
         been updated in nlb-site-assets and puts to dynamodb.
+      Policies:
+        # TODO: Follow least privileged access
+        - AmazonDynamoDBFullAccess
       Events:
         NlbSiteAssetsEvent:
           Type: S3

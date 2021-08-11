@@ -28,8 +28,6 @@ def _get_presigned_url(file_data: FileMetaData):
         'Metadata': {
             'title': file_data.title,
             'description': file_data.description,
-            'file_name': file_data.file_name,
-            'asset_id': asset_id
         }
     }
 
