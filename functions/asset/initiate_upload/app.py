@@ -7,7 +7,7 @@ import humps
 
 from botocore.client import BaseClient
 from botocore.exceptions import ClientError
-from layers.shared.utils.response_utility import create_response
+from layers.shared.common_utils.response_utility import create_response
 from utils.models import FileMetaData, FilePresignedResponse
 
 
@@ -24,6 +24,7 @@ def _get_presigned_url(file_data: FileMetaData):
     request = {
         'Bucket': os.environ['ASSET_BUCKET'],
         'Key': f"{file_data.asset_type}/{asset_id}/{file_data.file_name}",
+        'ContentType': file_data.content_type,
         'Metadata': {
             'title': file_data.title,
             'description': file_data.description,
