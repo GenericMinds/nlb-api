@@ -39,14 +39,14 @@ Resources:
             Path: '/api/initiate-upload'
             Method: POST
 
-  AssetMetadataPostFunction:
+  AssetPutFunction:
     Type: 'AWS::Serverless::Function'
     Properties:
-      CodeUri: functions/asset/metadata_post
+      CodeUri: functions/asset/put
       Handler: app.handler
       Description: >-
-        A Function that retrieves metadata for the object that has
-        been updated in nlb-site-assets.
+        A Function that retrieves asset data for the object that has
+        been updated in nlb-site-assets and puts to dynamodb.
       Events:
         NlbSiteAssetsEvent:
           Type: S3
@@ -84,3 +84,12 @@ Outputs:
   AssetInitiateUploadFunctionIamRole:
     Description: "Implicit IAM Role created for AssetInitiateUploadFunction"
     Value: !GetAtt AssetInitiateUploadFunctionRole.Arn
+  AssetPutFunction:
+    Description: "Asset Put lambda Function ARN"
+    Value: !GetAtt AssetPutFunction.Arn
+  AssetPutFunctionIamRole:
+    Description: "Implicit IAM Role created for AssetPutFunction"
+    Value: !GetAtt AssetPutFunctionRole.Arn
+  NoLuvBeatsAssetBucket:
+    Description: "Asset bucket for NLB ARN"
+    Value: !GetAtt NlbAssetBucket.Arn
