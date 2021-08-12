@@ -47,6 +47,8 @@ Resources:
       Description: >-
         A Function that retrieves asset data for the object that has
         been updated in nlb-site-assets and puts to dynamodb.
+      Layers:
+        - !Ref SharedLayer
       Policies:
         # TODO: Follow least privileged access
         - AmazonDynamoDBFullAccess

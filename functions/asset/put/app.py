@@ -2,33 +2,35 @@ import boto3
 import os
 
 from botocore.client import BaseClient
+from dataclasses import asdict
+from layers.shared.common_models.asset_models import AssetMetaData
 
 
 def handler(event, context):
-    # Grab object details
     s3 = event['Records'][0]['s3']
     bucket_name = s3['bucket']['name']
     asset_key = s3['object']['key']
 
-    # Grab asset metadata from s3
+    asset_data = get_asset_data_from_s3(bucket_name, asset_key)
+    return put_asset_data_in_dynamodb(asset_data)
+
+
+def get_asset_data_from_s3(bucket_name: str, asset_key: str) -> AssetMetaData:
     s3_client: BaseClient = boto3.client('s3')
     asset = s3_client.head_object(Bucket=bucket_name, Key=asset_key)
-    metadata = asset['Metadata']
     keyArray = asset_key.split('/')
 
-    dynamodb = boto3.resource('dynamodb')
-
-    # insert metadata into db table
-    table = dynamodb.Table(os.environ['ASSET_DB_TABLE'])
-    response = table.put_item(
-        Item={
-            "id": keyArray[1],
-            "title": metadata['title'],
-            "description": metadata['description'],
-            "content_type": asset['ContentType'],
-            "file_name": keyArray[2],
-            "asset_type": keyArray[0]
-        }
+    return AssetMetaData(
+        id=keyArray[1],
+        title=asset['Metadata']['title'],
+        description=asset['Metadata']['description'],
+        content_type=asset['ContentType'],
+        file_name=keyArray[2],
+        asset_type=keyArray[0]
     )
 
-    return response
+
+def put_asset_data_in_dynamodb(asset_data: AssetMetaData):
+    dynamodb = boto3.resource('dynamodb')
+    table = dynamodb.Table(os.environ['ASSET_DB_TABLE'])
+    return table.put_item(Item=asdict(asset_data))
