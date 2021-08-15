@@ -2,7 +2,8 @@ from dataclasses import dataclass
 
 
 @dataclass
-class FileMetaData:
+class AssetMetaData:
+    id: str
     title: str
     description: str
     file_name: str
@@ -11,6 +12,6 @@ class FileMetaData:
 
 
 @dataclass
-class FilePresignedResponse:
+class AssetPresignedResponse:
     asset_id: str
     presigned_url: str
