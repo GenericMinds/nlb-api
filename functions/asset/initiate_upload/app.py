@@ -7,7 +7,7 @@ import humps
 
 from botocore.client import BaseClient
 from botocore.exceptions import ClientError
-from layers.shared.common_utils.response_utility import create_response
+from layers.shared.common_utils.response_utility import ResponseUtility
 from layers.shared.common_models.asset_models import AssetMetaData, AssetPresignedResponse
 
 
@@ -16,7 +16,7 @@ def handler(event, context):
     body = humps.decamelize(body)
     asset_data = AssetMetaData(**body, id=uuid.uuid4().hex)
     response = _get_presigned_url(asset_data)
-    return create_response(response, 201)
+    return ResponseUtility.create_response(response, 201)
 
 
 def _get_presigned_url(file_data: AssetMetaData):
