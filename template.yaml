@@ -8,6 +8,13 @@ Description: >
 ### Globals
 ###############################################################################
 
+
+
+
+###############################################################################
+### Globals
+###############################################################################
+
 Globals:
   Function:
     Timeout: 300
@@ -40,10 +47,14 @@ Resources:
       Policies:
         - Version: '2012-10-17'
           Statement:
-            - Effect: Allow
+            - Sid: AssetBucketPut
+              Effect: Allow
               Action:
                 - 's3:PutObject'
-              Resource: 'arn:aws:s3:::*'
+              Resource:
+                - !Sub
+                  - 'arn:aws:s3:::${bucketName}/*'
+                  - { bucketName: *asset_bucket }
       Events:
         AssetInitiateUpload:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
@@ -65,17 +76,19 @@ Resources:
       Policies:
         - Version: '2012-10-17'
           Statement:
-            - Effect: Allow
+            - Sid: AssetBucketGet
+              Effect: Allow
               Action:
                 - 's3:GetObject'
-              Resource: 'arn:aws:s3:::*' #TODO find a way to dynamically pull this resource from template
-            - Effect: Allow
+              Resource:
+                - !Sub
+                  - 'arn:aws:s3:::${bucketName}/*'
+                  - { bucketName: *asset_bucket }
+            - Sid: AssetMetadataTablePut
+              Effect: Allow
               Action:
-                - 'dynamodb:GetItem'
                 - 'dynamodb:PutItem'
-                - 'dynamodb:Scan'
-                - 'dynamodb:UpdateItem'
-              Resource: 'arn:aws:dynamodb:us-east-1:984529065355:table/nlb-db-asset-metadata' #TODO find a way to dynamically pull this resource from template
+              Resource: !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${AssetMetadataTable}'
       Events:
         NlbSiteAssetsEvent:
           Type: S3
