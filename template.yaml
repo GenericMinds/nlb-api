@@ -4,22 +4,28 @@ Description: >
   NoLuvBeats API
   Serverless API for NoLuvBeats
 
-# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+###############################################################################
+### Globals
+###############################################################################
+
 Globals:
   Function:
     Timeout: 300
     Runtime: python3.8
     Environment:
       Variables:
-        ASSET_BUCKET: nlb-site-assets
+        ASSET_BUCKET: &asset_bucket nlb-site-assets
         ASSET_DB_TABLE: nlb-db-asset-metadata
 
+###############################################################################
+### Resources
+###############################################################################
 
 Resources:
   NoLuvBeatsAPI:
     Type: 'AWS::Serverless::Api'
     Properties:
-      StageName: Prod
+      StageName: api
 
   AssetInitiateUploadFunction:
     Type: 'AWS::Serverless::Function' # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -31,12 +37,19 @@ Resources:
         the frontend to upload assets to nlb-site-assets.
       Layers:
         - !Ref SharedLayer
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - 's3:PutObject'
+              Resource: 'arn:aws:s3:::*'
       Events:
         AssetInitiateUpload:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             RestApiId: !Ref NoLuvBeatsAPI
-            Path: '/api/initiate-upload'
+            Path: '/asset/initiate-upload'
             Method: POST
 
   AssetPutFunction:
@@ -50,8 +63,19 @@ Resources:
       Layers:
         - !Ref SharedLayer
       Policies:
-        # TODO: Follow least privileged access
-        - AmazonDynamoDBFullAccess
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - 's3:GetObject'
+              Resource: 'arn:aws:s3:::*'
+            - Effect: Allow
+              Action:
+                - 'dynamodb:GetItem'
+                - 'dynamodb:PutItem'
+                - 'dynamodb:Scan'
+                - 'dynamodb:UpdateItem'
+              Resource: 'arn:aws:dynamodb:::*'
       Events:
         NlbSiteAssetsEvent:
           Type: S3
@@ -71,10 +95,33 @@ Resources:
     Metadata:
       BuildMethod: python3.8
 
+#  ResultsTable:
+#    Type: AWS::Serverless::SimpleTable
+
   NlbAssetBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: nlb-site-assets
+      BucketName: *asset_bucket
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+
+#  NlbAssetBucketPolicy:
+#    Type: AWS::S3::BucketPolicy
+#    Properties:
+#      Bucket: !NlbAssetBucket
+#      PolicyDocument:
+#        Statement:
+#          - Sid: assetInitiateUploadFunction
+#            Effect: Allow
+#            Action:
+
+
+
+###############################################################################
+### Outputs
+###############################################################################
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
@@ -82,7 +129,7 @@ Outputs:
   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
   NoLuvBeatsAPI:
     Description: "API Gateway endpoint URL for Prod stage"
-    Value: !Sub "https://${NoLuvBeatsAPI}.execute-api.${AWS::Region}.amazonaws.com/Prod/api/initiate-upload"
+    Value: !Sub "https://${NoLuvBeatsAPI}.execute-api.${AWS::Region}.amazonaws.com/api/asset/initiate-upload"
   AssetInitiateUploadFunction:
     Description: "Asset Initiate Upload Lambda Function ARN"
     Value: !GetAtt AssetInitiateUploadFunction.Arn

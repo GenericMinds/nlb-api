@@ -15,11 +15,11 @@ def handler(event, context):
     body = ujson.loads(event['body'])
     body = humps.decamelize(body)
     asset_data = AssetMetaData(**body, id=uuid.uuid4().hex)
-    response = _get_presigned_url(asset_data)
+    response = get_presigned_url(asset_data)
     return ResponseUtility.create_response(response, 201)
 
 
-def _get_presigned_url(file_data: AssetMetaData):
+def get_presigned_url(file_data: AssetMetaData):
     request = {
         'Bucket': os.environ['ASSET_BUCKET'],
         'Key': f"{file_data.asset_type}/{file_data.id}/{file_data.file_name}",
