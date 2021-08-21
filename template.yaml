@@ -15,7 +15,7 @@ Globals:
     Environment:
       Variables:
         ASSET_BUCKET: &asset_bucket nlb-site-assets
-        ASSET_DB_TABLE: nlb-db-asset-metadata
+        ASSET_DB_TABLE: &asset_db_table nlb-db-asset-metadata
 
 ###############################################################################
 ### Resources
@@ -68,20 +68,20 @@ Resources:
             - Effect: Allow
               Action:
                 - 's3:GetObject'
-              Resource: 'arn:aws:s3:::*'
+              Resource: 'arn:aws:s3:::*' #TODO find a way to dynamically pull this resource from template
             - Effect: Allow
               Action:
                 - 'dynamodb:GetItem'
                 - 'dynamodb:PutItem'
                 - 'dynamodb:Scan'
                 - 'dynamodb:UpdateItem'
-              Resource: 'arn:aws:dynamodb:::*'
+              Resource: 'arn:aws:dynamodb:us-east-1:984529065355:table/nlb-db-asset-metadata' #TODO find a way to dynamically pull this resource from template
       Events:
         NlbSiteAssetsEvent:
           Type: S3
           Properties:
             Bucket:
-              Ref: NlbAssetBucket
+              Ref: AssetBucket
             Events:
               - 's3:ObjectCreated:*'
 
@@ -95,10 +95,18 @@ Resources:
     Metadata:
       BuildMethod: python3.8
 
-#  ResultsTable:
-#    Type: AWS::Serverless::SimpleTable
+  AssetMetadataTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      TableName: *asset_db_table
+      PrimaryKey:
+        Name: id #TODO refine this after we structure metadata schema
+        Type: String
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
 
-  NlbAssetBucket:
+  AssetBucket:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: *asset_bucket
@@ -106,18 +114,6 @@ Resources:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:
               SSEAlgorithm: AES256
-
-#  NlbAssetBucketPolicy:
-#    Type: AWS::S3::BucketPolicy
-#    Properties:
-#      Bucket: !NlbAssetBucket
-#      PolicyDocument:
-#        Statement:
-#          - Sid: assetInitiateUploadFunction
-#            Effect: Allow
-#            Action:
-
-
 
 ###############################################################################
 ### Outputs
@@ -142,6 +138,9 @@ Outputs:
   AssetPutFunctionIamRole:
     Description: "Implicit IAM Role created for AssetPutFunction"
     Value: !GetAtt AssetPutFunctionRole.Arn
-  NoLuvBeatsAssetBucket:
-    Description: "Asset bucket for NLB ARN"
-    Value: !GetAtt NlbAssetBucket.Arn
+  AssetMetadataTable:
+    Description: "Asset Metadata dynamodb table ARN"
+    Value: !GetAtt AssetMetadataTable.Arn
+  AssetBucket:
+    Description: "Asset bucket ARN"
+    Value: !GetAtt AssetBucket.Arn

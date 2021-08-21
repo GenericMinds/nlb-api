@@ -19,7 +19,7 @@ def handler(event, context):
     return ResponseUtility.create_response(response, 201)
 
 
-def get_presigned_url(file_data: AssetMetaData):
+def get_presigned_url(file_data: AssetMetaData) -> AssetPresignedResponse:
     request = {
         'Bucket': os.environ['ASSET_BUCKET'],
         'Key': f"{file_data.asset_type}/{file_data.id}/{file_data.file_name}",
@@ -35,5 +35,5 @@ def get_presigned_url(file_data: AssetMetaData):
         presigned_url = s3_client.generate_presigned_url(ClientMethod='put_object', Params=request)
     except ClientError as e:
         logging.error(e)
-        return "Encountered an error while generating presigned url"
+        raise e
     return AssetPresignedResponse(asset_id=file_data.id, presigned_url=presigned_url)
