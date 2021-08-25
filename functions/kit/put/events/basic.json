@@ -1,0 +1,38 @@
+{
+  "Records": [
+    {
+      "eventVersion": "2.1",
+      "eventSource": "aws:s3",
+      "awsRegion": "us-east-1",
+      "eventTime": "2021-08-21T01:38:25.220Z",
+      "eventName": "ObjectCreated:Put",
+      "userIdentity": {
+        "principalId": "AWS:AIDA6KOUBKWF5H3ZLCKB6"
+      },
+      "requestParameters": {
+        "sourceIPAddress": "71.173.205.61"
+      },
+      "responseElements": {
+        "x-amz-request-id": "T1MFJ55RX4A3CKZE",
+        "x-amz-id-2": "T16u/OOBIvqABqVXNZTbEyNw37R0DUShhjS1QTq9+UZSuTBDvbFKk1hMLUPWQOpuUIsfGDkHd1gsBPycPlpmiOdPLZP2yJwG"
+      },
+      "s3": {
+        "s3SchemaVersion": "1.0",
+        "configurationId": "38ec0015-3a6e-4449-8c55-fd58bed69b79",
+        "bucket": {
+          "name": "nlb-site-assets",
+          "ownerIdentity": {
+            "principalId": "AYUBHXGXA16XL"
+          },
+          "arn": "arn:aws:s3:::nlb-site-assets"
+        },
+        "object": {
+          "key": "kits/cb1ed7c9b2094f54aec1090ea3c7f8e6/beatSauce.zip",
+          "size": 0,
+          "eTag": "d41d8cd98f00b204e9800998ecf8427e",
+          "sequencer": "0061205916063F15EC"
+        }
+      }
+    }
+  ]
+}
