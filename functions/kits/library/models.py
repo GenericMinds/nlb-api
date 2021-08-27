@@ -7,9 +7,3 @@ class Kit:
     kit_type: str
     title: str
     description: str
-
-
-@dataclass
-class KitPresignedResponse:
-    file_name: str
-    presigned_url: str
