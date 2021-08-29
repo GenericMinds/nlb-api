@@ -15,7 +15,7 @@ Globals:
     Environment:
       Variables:
         ASSET_BUCKET: &asset_bucket nlb-site-assets
-        KIT_TABLE: &kit_table nlb-kit
+        KIT_TABLE: &kit_table nlb-kits
 
 ###############################################################################
 ### Resources
@@ -26,8 +26,6 @@ Resources:
     Type: 'AWS::Serverless::Api'
     Properties:
       StageName: api
-      BinaryMediaTypes:
-        - "*/*"
 
   KitFunction:
     Type: 'AWS::Serverless::Function' # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
