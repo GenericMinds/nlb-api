@@ -15,7 +15,7 @@ Globals:
     Environment:
       Variables:
         ASSET_BUCKET: &asset_bucket nlb-site-assets
-        KIT_TABLE: &kit_table nlb-kit
+        KIT_TABLE: &kit_table nlb-kits
 
 ###############################################################################
 ### Resources
@@ -27,52 +27,22 @@ Resources:
     Properties:
       StageName: api
 
-  KitInitiateUploadFunction:
+  KitFunction:
     Type: 'AWS::Serverless::Function' # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
-      CodeUri: functions/kit/initiate_upload
-      Handler: app.handler
+      CodeUri: functions/kits
+      Handler: app.app
       Description: >-
         A Function that generates a presigned url to be used in
         the frontend to upload kits to nlb-site-assets.
-      Layers:
-        - !Ref SharedLayer
       Policies:
         - Version: '2012-10-17'
           Statement:
             - Sid: AssetBucketPut
               Effect: Allow
               Action:
-                - 's3:PutObject'
-              Resource:
-                - !Sub
-                  - 'arn:aws:s3:::${bucketName}/*'
-                  - { bucketName: *asset_bucket }
-      Events:
-        KitInitiateUpload:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-          Properties:
-            RestApiId: !Ref NoLuvBeatsAPI
-            Path: '/kit/initiate-upload'
-            Method: POST
-
-  KitPutFunction:
-    Type: 'AWS::Serverless::Function'
-    Properties:
-      CodeUri: functions/kit/put
-      Handler: app.handler
-      Description: >-
-        A Function that retrieves kit data for the object that has
-        been updated in nlb-site-assets and puts to dynamodb.
-      Layers:
-        - !Ref SharedLayer
-      Policies:
-        - Version: '2012-10-17'
-          Statement:
-            - Sid: AssetBucketGet
-              Effect: Allow
-              Action:
                 - 's3:GetObject'
+                - 's3:PutObject'
               Resource:
                 - !Sub
                   - 'arn:aws:s3:::${bucketName}/*'
@@ -83,23 +53,12 @@ Resources:
                 - 'dynamodb:PutItem'
               Resource: !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${KitTable}'
       Events:
-        NlbSiteAssetsEvent:
-          Type: S3
+        KitPost:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            Bucket:
-              Ref: AssetBucket
-            Events:
-              - 's3:ObjectCreated:*'
-
-  SharedLayer:
-    Type: 'AWS::Serverless::LayerVersion'
-    Properties:
-      LayerName: nlb-shared-layer
-      ContentUri: layers/shared
-      CompatibleRuntimes:
-        - python3.8
-    Metadata:
-      BuildMethod: python3.8
+            RestApiId: !Ref NoLuvBeatsAPI
+            Path: '/kits'
+            Method: POST
 
   KitTable:
     Type: AWS::Serverless::SimpleTable
@@ -131,19 +90,13 @@ Outputs:
   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
   NoLuvBeatsAPI:
     Description: "API Gateway endpoint URL for Prod stage"
-    Value: !Sub "https://${NoLuvBeatsAPI}.execute-api.${AWS::Region}.amazonaws.com/api/kit/initiate-upload"
-  KitInitiateUploadFunction:
-    Description: "Kit Initiate Upload Lambda Function ARN"
-    Value: !GetAtt KitInitiateUploadFunction.Arn
-  KitInitiateUploadFunctionIamRole:
-    Description: "Implicit IAM Role created for KitInitiateUploadFunction"
-    Value: !GetAtt KitInitiateUploadFunctionRole.Arn
-  KitPutFunction:
-    Description: "Kit Put lambda Function ARN"
-    Value: !GetAtt KitPutFunction.Arn
-  KitPutFunctionIamRole:
-    Description: "Implicit IAM Role created for KitPutFunction"
-    Value: !GetAtt KitPutFunctionRole.Arn
+    Value: !Sub "https://${NoLuvBeatsAPI}.execute-api.${AWS::Region}.amazonaws.com/api/kits"
+  KitFunction:
+    Description: "Kit Lambda Function ARN"
+    Value: !GetAtt KitFunction.Arn
+  KitFunctionIamRole:
+    Description: "Implicit IAM Role created for KitsFunction"
+    Value: !GetAtt KitFunctionRole.Arn
   KitTable:
     Description: "Kit dynamodb table ARN"
     Value: !GetAtt KitTable.Arn

@@ -10,6 +10,7 @@ class Kit:
 
 
 @dataclass
-class KitPresignedResponse:
+class KitUrls:
     file_name: str
-    presigned_url: str
+    image_presigned_url: str
+    zip_presigned_url: str

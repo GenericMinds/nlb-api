@@ -1,0 +1,63 @@
+{
+  "body": "{\r\n    'title': 'Test Title',\r\n    'description': 'These beats are on fire',\r\n    'kitType': 'loop'\r\n}",
+  "headers": {
+    "Accept": "*/*",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Connection": "keep-alive",
+    "Content-Length": "102",
+    "Content-Type": "application/json",
+    "Host": "localhost:8080",
+    "Postman-Token": "d9492558-2540-4f38-9795-4ced435aad3e",
+    "User-Agent": "PostmanRuntime/7.28.3",
+    "X-Forwarded-Port": "8080",
+    "X-Forwarded-Proto": "http"
+  },
+  "httpMethod": "POST",
+  "isBase64Encoded": false,
+  "multiValueHeaders": {
+    "Accept": ["*/*"],
+    "Accept-Encoding": ["gzip, deflate, br"],
+    "Connection": ["keep-alive"],
+    "Content-Length": ["102"],
+    "Content-Type": ["application/json"],
+    "Host": ["localhost:8080"],
+    "Postman-Token": ["d9492558-2540-4f38-9795-4ced435aad3e"],
+    "User-Agent": ["PostmanRuntime/7.28.3"],
+    "X-Forwarded-Port": ["8080"],
+    "X-Forwarded-Proto": ["http"]
+  },
+  "multiValueQueryStringParameters": null,
+  "path": "/kits",
+  "pathParameters": null,
+  "queryStringParameters": null,
+  "requestContext": {
+    "accountId": "123456789012",
+    "apiId": "1234567890",
+    "domainName": "localhost:8080",
+    "extendedRequestId": null,
+    "httpMethod": "POST",
+    "identity": {
+      "accountId": null,
+      "apiKey": null,
+      "caller": null,
+      "cognitoAuthenticationProvider": null,
+      "cognitoAuthenticationType": null,
+      "cognitoIdentityPoolId": null,
+      "sourceIp": "127.0.0.1",
+      "user": null,
+      "userAgent": "Custom User Agent String",
+      "userArn": null
+    },
+    "path": "/kits",
+    "protocol": "HTTP/1.1",
+    "requestId": "822f5116-5e3a-493f-996e-a6309d958232",
+    "requestTime": "29/Aug/2021:00:52:57 +0000",
+    "requestTimeEpoch": 1630198377,
+    "resourceId": "123456",
+    "resourcePath": "/kits",
+    "stage": "api"
+  },
+  "resource": "/kits",
+  "stageVariables": null,
+  "version": "1.0"
+}
