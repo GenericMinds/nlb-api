@@ -7,7 +7,7 @@ from botocore.client import BaseClient
 from botocore.exceptions import ClientError
 
 from functions.kits.lib.enums import ContentType, FileExtension
-from functions.kits.lib.models import Kit, KitPresignedResponse
+from functions.kits.lib.models import Kit
 
 
 class KitService:
@@ -28,8 +28,7 @@ class KitService:
 
         s3_client: BaseClient = boto3.client('s3')
         try:
-            presigned_url = s3_client.generate_presigned_url(ClientMethod='put_object', Params=request, ExpiresIn=1800)
+            return s3_client.generate_presigned_url(ClientMethod='put_object', Params=request, ExpiresIn=1800)
         except ClientError as e:
             logging.error(e)
             raise e
-        return KitPresignedResponse(file_extension=file_extension.value, presigned_url=presigned_url)
