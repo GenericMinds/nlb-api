@@ -2,7 +2,7 @@ version = 0.1
 [default]
 [default.pipeline_bootstrap]
 [default.pipeline_bootstrap.parameters]
-pipeline_user = "arn:aws:iam::984529065355:user/aws-sam-cli-managed-dev-pipeline-reso-PipelineUser-FDLCMJ2ACAQL"
+pipeline_user = "arn:aws:iam::984529065355:user/aws-sam-cli-managed-pipeline"
 
 [prod]
 [prod.pipeline_bootstrap]
