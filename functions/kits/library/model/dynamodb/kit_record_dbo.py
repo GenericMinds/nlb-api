@@ -1,13 +1,12 @@
 import os
 
-from dataclasses import dataclass
-from pynamodb.models import Model
 from pynamodb.attributes import UnicodeAttribute
+from pynamodb.models import Model
 
 
-class Kit(Model):
+class KitRecordDbo(Model):
     """
-    Kit PynamoDB DAO
+    PynamoDB model to interact with DynamoDB
     """
     class Meta:
         table_name = os.environ['KIT_TABLE']
@@ -15,10 +14,3 @@ class Kit(Model):
     kit_type = UnicodeAttribute()
     title = UnicodeAttribute()
     description = UnicodeAttribute()
-
-
-@dataclass
-class KitUrls:
-    file_name: str
-    image_presigned_url: str
-    zip_presigned_url: str
