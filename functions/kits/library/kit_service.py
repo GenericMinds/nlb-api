@@ -2,21 +2,14 @@ import boto3
 import logging
 import os
 
-from dataclasses import asdict
 from botocore.client import BaseClient
 from botocore.exceptions import ClientError
 
-from functions.kits.lib.enums import ContentType, FileExtension
-from functions.kits.lib.models import Kit
+from functions.kits.library.enums import ContentType, FileExtension
+from functions.kits.library.models import Kit
 
 
 class KitService:
-    @staticmethod
-    def put_kit_in_dynamodb(kit: Kit):
-        dynamodb = boto3.resource('dynamodb')
-        table = dynamodb.Table(os.environ['KIT_TABLE'])
-        return table.put_item(Item=asdict(kit))
-
     @staticmethod
     def generate_put_presigned_url(kit: Kit, content_type: ContentType):
         file_extension = FileExtension[content_type.name]

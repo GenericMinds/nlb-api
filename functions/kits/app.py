@@ -4,19 +4,19 @@ from flask import request, jsonify
 from flask_lambda import FlaskLambda
 from dataclasses import asdict
 
-from lib.enums import ContentType
-from lib.kit_service import KitService
-from lib.models import Kit, KitUrls
+from library.enums import ContentType
+from library.kit_service import KitService
+from library.models import Kit, KitUrls
 
 app = FlaskLambda(__name__)
 
 
 @app.route('/kits', methods=['POST'])
-def lambda_handler():
+def kits_post():
     body = humps.decamelize(request.get_json())
 
     kit = Kit(**body, file_name=body['title'].replace(" ", ""))
-    KitService.put_kit_in_dynamodb(kit)
+    kit.save()
 
     kitUrls = KitUrls(
         file_name=kit.file_name,
@@ -25,3 +25,20 @@ def lambda_handler():
     )
 
     return jsonify(humps.camelize(asdict(kitUrls))), 201
+
+
+@app.route('/kits', methods=['GET'])
+def kits_get():
+    kit_type = request.args.get('kitType')
+    if kit_type:
+        filter_condition = Kit.kit_type == kit_type
+    else:
+        filter_condition = None
+
+    iterable_kits = Kit.scan(filter_condition=filter_condition)
+    kits = [
+        kit.attribute_values
+        for kit in iterable_kits
+    ]
+
+    return jsonify(humps.camelize(kits)), 200
