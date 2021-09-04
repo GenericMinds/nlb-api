@@ -43,7 +43,7 @@ Resources:
               Action:
                 - 's3:GetObject'
                 - 's3:PutObject'
-                - 's3:PutObjectTagging'
+                -  's3:PutObjectAcl'
               Resource:
                 - !Sub
                   - 'arn:aws:s3:::${bucketName}/*'
@@ -88,26 +88,6 @@ Resources:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:
               SSEAlgorithm: AES256
-
-  AssetBucketPolicy:
-    Type: AWS::S3::BucketPolicy
-    Properties:
-      Bucket: !Ref AssetBucket
-      PolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-          - Action:
-            - 's3:GetObject'
-            Effect: Allow
-            Principal: "*"
-            Resource:
-              - !Sub
-                - 'arn:aws:s3:::${bucketName}/*'
-                - { bucketName: *asset_bucket }
-            Condition:
-              StringEquals:
-                's3:ExistingObjectTag/public':
-                  - 'True'
 
 ###############################################################################
 ### Outputs

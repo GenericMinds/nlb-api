@@ -42,12 +42,12 @@ class KitService:
     @staticmethod
     def _generate_put_presigned_url(kit: Kit, content_type: ContentType, public: bool = False):
         file_extension = FileExtension[content_type.name]
-        tags = {"public": public}
+
         request = {
             "Bucket": os.environ["ASSET_BUCKET"],
             "Key": f"kits/{kit.kit_type.value}/{kit.file_name}/{kit.file_name}.{file_extension.value}",
             "ContentType": content_type.value,
-            "Tagging": parse.urlencode(tags),
+            "ACL": "public-read" if public else "private"
         }
 
         s3_client: BaseClient = boto3.client("s3")

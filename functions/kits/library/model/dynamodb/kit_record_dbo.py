@@ -14,4 +14,3 @@ class KitRecordDbo(Model):
     kit_type = UnicodeAttribute()
     title = UnicodeAttribute()
     description = UnicodeAttribute()
-    image_url = UnicodeAttribute()
