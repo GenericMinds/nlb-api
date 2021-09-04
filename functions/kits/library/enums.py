@@ -9,3 +9,9 @@ class ContentType(Enum):
 class FileExtension(Enum):
     ZIP = "zip"
     JPEG = "jpg"
+
+
+class KitType(str, Enum):
+    LOOP = "loop"
+    MIDI = "midi"
+    DRUM = "drum"

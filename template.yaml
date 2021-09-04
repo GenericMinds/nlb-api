@@ -31,7 +31,7 @@ Resources:
     Type: 'AWS::Serverless::Function' # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       CodeUri: functions/kits
-      Handler: app.app
+      Handler: handler.app
       Description: >-
         A Function that generates a presigned url to be used in
         the frontend to upload kits to nlb-site-assets.
@@ -43,6 +43,7 @@ Resources:
               Action:
                 - 's3:GetObject'
                 - 's3:PutObject'
+                - 's3:PutObjectTagging'
               Resource:
                 - !Sub
                   - 'arn:aws:s3:::${bucketName}/*'
@@ -59,6 +60,12 @@ Resources:
             RestApiId: !Ref NoLuvBeatsAPI
             Path: '/kits'
             Method: POST
+        KitGet:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            RestApiId: !Ref NoLuvBeatsAPI
+            Path: '/kits'
+            Method: GET
 
   KitTable:
     Type: AWS::Serverless::SimpleTable
@@ -79,6 +86,22 @@ Resources:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:
               SSEAlgorithm: AES256
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Sid: AssetBucketPublic
+              Effect: Allow
+              Principal: "*"
+              Action:
+                - 's3:GetObject'
+              Resource:
+                - !Sub
+                  - 'arn:aws:s3:::${bucketName}/*'
+                  - { bucketName: *asset_bucket }
+              Condition:
+                StringEquals:
+                  's3:ExistingObjectTag/public':
+                    - 'True'
 
 ###############################################################################
 ### Outputs
