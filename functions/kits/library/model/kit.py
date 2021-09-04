@@ -1,5 +1,5 @@
 import os
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass, asdict, field
 from typing import List, Optional
 
 import humps
@@ -18,11 +18,9 @@ class Kit:
     kit_type: KitType
     title: str
     description: str
+    image_url: str = field(init=False)
 
-    # Virtual Properties
-    image_url: Optional[str] = None
-
-    def add_image_url(self):
+    def __post_init__(self):
         image_url = f"https://{os.environ['ASSET_BUCKET']}.s3.amazonaws.com/kits/{self.kit_type}/{self.file_name}/{self.file_name}.jpg"
         self.image_url = image_url
 
@@ -34,6 +32,7 @@ class Kit:
         raw_kit_dbo.kit_type = self.kit_type.value
         raw_kit_dbo.title = self.title
         raw_kit_dbo.description = self.description
+        raw_kit_dbo.image_url = self.image_url
 
         return raw_kit_dbo
 
@@ -46,7 +45,8 @@ class Kit:
                 file_name=raw_kit.file_name,
                 kit_type=KitType(raw_kit.kit_type),
                 title=raw_kit.title,
-                description=raw_kit.description
+                description=raw_kit.description,
+                image_url=raw_kit.image_url
             )
             for raw_kit in raw_kits
         ]

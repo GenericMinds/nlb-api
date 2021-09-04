@@ -37,8 +37,6 @@ class KitService:
     @staticmethod
     def get_kits(kit_type: Optional[str] = None):
         kits = KitGateway.get_kits(kit_type)
-        for kit in kits:
-            kit.add_image_url()
         return kits
 
     @staticmethod
