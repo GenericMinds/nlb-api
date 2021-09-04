@@ -1,8 +1,8 @@
+import humps
 import os
+
 from dataclasses import dataclass, asdict, field
 from typing import List
-
-import humps
 
 from functions.kits.library.enums import KitType
 from functions.kits.library.model.dynamodb.kit_record_dbo import KitRecordDbo
@@ -13,7 +13,6 @@ class Kit:
     """
     Represents a Kit at a high level
     """
-
     file_name: str
     kit_type: KitType
     title: str
@@ -26,7 +25,6 @@ class Kit:
 
     def to_raw_kit_dbo(self) -> KitRecordDbo:
         "Converts a Kit to a KitRecordDbo"
-
         raw_kit_dbo = KitRecordDbo()
         raw_kit_dbo.file_name = self.file_name
         raw_kit_dbo.kit_type = self.kit_type.value
@@ -38,7 +36,6 @@ class Kit:
     @classmethod
     def from_raw_kit_record_dbos(cls, raw_kits: List[KitRecordDbo]):
         "Converts a list of KitRecordDbos to a list of Kit instances"
-
         kits = [
             cls(
                 file_name=raw_kit.file_name,

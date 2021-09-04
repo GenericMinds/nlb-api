@@ -6,7 +6,6 @@ from functions.kits.library.model.kit import Kit
 
 class KitGateway:
     "Gateway for operations from DynamoDB (wraps PynamoDB ORM)"
-
     @staticmethod
     def get_kits(kit_type: Optional[str] = None) -> List[Kit]:
         "Retrieve all kits based on kit type"
