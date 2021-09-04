@@ -38,20 +38,22 @@ Resources:
       Policies:
         - Version: '2012-10-17'
           Statement:
-            - Sid: AssetBucketPut
+            - Sid: AssetBucketPermissions
               Effect: Allow
               Action:
                 - 's3:GetObject'
                 - 's3:PutObject'
-                - 's3:PutObjectTagging'
+                - 's3:PutObjectAcl'
               Resource:
                 - !Sub
                   - 'arn:aws:s3:::${bucketName}/*'
                   - { bucketName: *asset_bucket }
-            - Sid: KitTablePut
+            - Sid: KitTablePermissions
               Effect: Allow
               Action:
                 - 'dynamodb:PutItem'
+                - 'dynamodb:Scan'
+                - 'dynamodb:DescribeTable'
               Resource: !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${KitTable}'
       Events:
         KitPost:
@@ -86,22 +88,6 @@ Resources:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:
               SSEAlgorithm: AES256
-      Policies:
-        - Version: '2012-10-17'
-          Statement:
-            - Sid: AssetBucketPublic
-              Effect: Allow
-              Principal: "*"
-              Action:
-                - 's3:GetObject'
-              Resource:
-                - !Sub
-                  - 'arn:aws:s3:::${bucketName}/*'
-                  - { bucketName: *asset_bucket }
-              Condition:
-                StringEquals:
-                  's3:ExistingObjectTag/public':
-                    - 'True'
 
 ###############################################################################
 ### Outputs
