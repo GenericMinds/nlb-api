@@ -11,7 +11,7 @@ class KitGateway:
     def get_kits(kit_type: Optional[str] = None) -> List[Kit]:
         "Retrieve all kits based on kit type"
         if kit_type:
-            filter_condition = Kit.kit_type == kit_type
+            filter_condition = KitRecordDbo.kit_type == kit_type
         else:
             filter_condition = None
 

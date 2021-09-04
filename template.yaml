@@ -31,7 +31,7 @@ Resources:
     Type: 'AWS::Serverless::Function' # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       CodeUri: functions/kits
-      Handler: app.app
+      Handler: handler.app
       Description: >-
         A Function that generates a presigned url to be used in
         the frontend to upload kits to nlb-site-assets.

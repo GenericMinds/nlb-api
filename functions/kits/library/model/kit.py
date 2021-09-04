@@ -1,5 +1,7 @@
-from dataclasses import dataclass
-from typing import List
+from dataclasses import dataclass, asdict
+from typing import List, Optional
+
+import humps
 
 from functions.kits.library.enums import KitType
 from functions.kits.library.model.dynamodb.kit_record_dbo import KitRecordDbo
@@ -16,6 +18,9 @@ class Kit:
     title: str
     description: str
 
+    # Virtual Properties
+    image_presigned_url: Optional[str] = None
+
     def to_raw_kit_dbo(self) -> KitRecordDbo:
         "Converts a Kit to a KitRecordDbo"
 
@@ -28,7 +33,7 @@ class Kit:
         return raw_kit_dbo
 
     @classmethod
-    def from_raw_kit_record_dbos(cls, raw_kits: List[KitRecordDbo]) -> List[Kit]:
+    def from_raw_kit_record_dbos(cls, raw_kits: List[KitRecordDbo]):
         "Converts a list of KitRecordDbos to a list of Kit instances"
 
         kits = [
@@ -42,3 +47,6 @@ class Kit:
         ]
 
         return kits
+
+    def camelize(self):
+        return humps.camelize(asdict(self))

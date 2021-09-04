@@ -11,7 +11,7 @@ class FileExtension(Enum):
     JPEG = "jpg"
 
 
-class KitType(Enum):
+class KitType(str, Enum):
     LOOP = "loop"
     MIDI = "midi"
     DRUM = "drum"
