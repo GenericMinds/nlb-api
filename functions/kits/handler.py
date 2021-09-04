@@ -1,5 +1,3 @@
-import humps
-
 from flask import request, jsonify
 from flask_lambda import FlaskLambda
 
