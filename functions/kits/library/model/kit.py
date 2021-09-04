@@ -1,6 +1,6 @@
 import os
 from dataclasses import dataclass, asdict, field
-from typing import List, Optional
+from typing import List
 
 import humps
 
@@ -32,7 +32,6 @@ class Kit:
         raw_kit_dbo.kit_type = self.kit_type.value
         raw_kit_dbo.title = self.title
         raw_kit_dbo.description = self.description
-        raw_kit_dbo.image_url = self.image_url
 
         return raw_kit_dbo
 
@@ -45,8 +44,7 @@ class Kit:
                 file_name=raw_kit.file_name,
                 kit_type=KitType(raw_kit.kit_type),
                 title=raw_kit.title,
-                description=raw_kit.description,
-                image_url=raw_kit.image_url
+                description=raw_kit.description
             )
             for raw_kit in raw_kits
         ]
