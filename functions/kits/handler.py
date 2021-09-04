@@ -11,10 +11,10 @@ app = FlaskLambda(__name__)
 
 @app.route("/kits", methods=["POST"])
 def post_kit():
-    body = humps.decamelize(request.get_json())
+    body = request.get_json()
     kit_post_urls = KitService.post_kit(
         title=body.get("title"),
-        kit_type=KitType(body.get("kit_type")),
+        kit_type=KitType(body.get("kitType")),
         description=body.get("description"),
     )
 

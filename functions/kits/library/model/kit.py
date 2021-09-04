@@ -1,3 +1,4 @@
+import os
 from dataclasses import dataclass, asdict
 from typing import List, Optional
 
@@ -19,7 +20,11 @@ class Kit:
     description: str
 
     # Virtual Properties
-    image_presigned_url: Optional[str] = None
+    image_url: Optional[str] = None
+
+    def add_image_url(self):
+        image_url = f"https://{os.environ['ASSET_BUCKET']}.s3.amazonaws.com/kits/{self.kit_type}/{self.file_name}/{self.file_name}.jpg"
+        self.image_url = image_url
 
     def to_raw_kit_dbo(self) -> KitRecordDbo:
         "Converts a Kit to a KitRecordDbo"
