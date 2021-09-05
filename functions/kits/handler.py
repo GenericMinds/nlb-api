@@ -1,6 +1,7 @@
-from flask import request, jsonify
+from flask import request
 from flask_lambda import FlaskLambda
 
+from functions.kits.library.utils import response
 from library.enums import KitType
 from functions.kits.library.service.kit_service import KitService
 
@@ -16,7 +17,7 @@ def post_kit():
         description=body.get("description"),
     )
 
-    return jsonify(kit_post_urls.camelize()), 201
+    return response(kit_post_urls.camelize(), 201)
 
 
 @app.route("/kits", methods=["GET"])
@@ -24,4 +25,4 @@ def get_kits():
     kit_type = request.args.get("kitType")
     kits = [kit.camelize() for kit in KitService.get_kits(kit_type)]
 
-    return jsonify(kits), 200
+    return response(kits, 200)
