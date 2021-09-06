@@ -2,7 +2,7 @@ from enum import Enum
 
 
 class ContentType(Enum):
-    ZIP = "application/zip"
+    ZIP = "application/x-zip-compressed"
     JPEG = "image/jpeg"
 
 
