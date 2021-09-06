@@ -92,6 +92,18 @@ Resources:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:
               SSEAlgorithm: AES256
+      CorsConfiguration:
+        CorsRules:
+          - AllowedHeaders:
+              - '*'
+            AllowedMethods:
+              - GET
+              - PUT
+            AllowedOrigins:
+              - 'http://localhost:3000'
+              - 'https://noluvbeats.com'
+            MaxAge: 1800
+            Id: AssetBucketCorsConfiguration
 
 ###############################################################################
 ### Outputs
