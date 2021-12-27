@@ -80,9 +80,6 @@ Resources:
       PrimaryKey:
         Name: file_name
         Type: String
-      ProvisionedThroughput:
-        ReadCapacityUnits: 5
-        WriteCapacityUnits: 5
 
   AssetBucket:
     Type: AWS::S3::Bucket

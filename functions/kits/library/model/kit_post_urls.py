@@ -1,6 +1,9 @@
-from dataclasses import dataclass
-from functions.kits.library.types import Json
 from __future__ import annotations
+
+from dataclasses import dataclass
+
+from functions.kits.library.types import Json
+
 
 @dataclass
 class KitPostUrls:
@@ -14,7 +17,7 @@ class KitPostUrls:
         attributes = {
             "file_name": file_name,
             "image_presigned_url": image_presigned_url,
-            "zip_presigned_url": zip_presigned_url
+            "zip_presigned_url": zip_presigned_url,
         }
 
         return cls(**attributes)
@@ -24,5 +27,5 @@ class KitPostUrls:
         return {
             "fileName": self.file_name,
             "imagePresignedUrl": self.image_presigned_url,
-            "zipPresignedUrl": self.zip_presigned_url
+            "zipPresignedUrl": self.zip_presigned_url,
         }

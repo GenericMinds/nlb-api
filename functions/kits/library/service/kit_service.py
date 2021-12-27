@@ -1,9 +1,8 @@
-from typing import List, Optional
-
-import boto3
 import logging
 import os
+from typing import List
 
+import boto3
 from botocore.client import BaseClient
 from botocore.exceptions import ClientError
 
@@ -23,7 +22,7 @@ class KitService:
         kit_post_urls = KitPostUrls.create(
             file_name=kit.file_name,
             image_presigned_url=cls._generate_put_presigned_url(kit, ContentType.JPEG, True),
-            zip_presigned_url=cls._generate_put_presigned_url(kit, ContentType.ZIP)
+            zip_presigned_url=cls._generate_put_presigned_url(kit, ContentType.ZIP),
         )
 
         return kit_post_urls
@@ -40,7 +39,7 @@ class KitService:
             "Bucket": os.environ["ASSET_BUCKET"],
             "Key": f"kits/{kit.kit_type.value}/{kit.file_name}/{kit.file_name}.{file_extension.value}",
             "ContentType": content_type.value,
-            "ACL": "public-read" if public else "private"
+            "ACL": "public-read" if public else "private",
         }
 
         s3_client: BaseClient = boto3.client("s3")

@@ -1,6 +1,6 @@
 from __future__ import annotations
-import os
 
+import os
 from dataclasses import dataclass
 from typing import List
 
@@ -11,9 +11,7 @@ from functions.kits.library.types import Json
 
 @dataclass
 class Kit:
-    """
-    Represents a Kit at a high level
-    """
+    "Represents a Kit at a high level"
     file_name: str
     kit_type: KitType
     title: str
@@ -30,7 +28,7 @@ class Kit:
             "kit_type": kit_type,
             "title": title,
             "description": description,
-            "image_url": f"https://{os.environ['ASSET_BUCKET']}.s3.amazonaws.com/kits/{kit_type.value}/{file_name}/{file_name}.jpg" 
+            "image_url": f"https://{os.environ['ASSET_BUCKET']}.s3.amazonaws.com/kits/{kit_type.value}/{file_name}/{file_name}.jpg",
         }
 
         return cls(**attributes)
@@ -46,14 +44,14 @@ class Kit:
         return raw_kit_dbo
 
     @classmethod
-    def from_raw_kit_record_dbos(cls, raw_kits: List[KitDbo]) -> List[Kit]:
+    def from_raw_kit_dbos(cls, raw_kits: List[KitDbo]) -> List[Kit]:
         "Converts a list of KitDbos to a list of Kit instances"
         kits = [
             cls(
                 file_name=raw_kit.file_name,
                 kit_type=KitType(raw_kit.kit_type),
                 title=raw_kit.title,
-                description=raw_kit.description
+                description=raw_kit.description,
             )
             for raw_kit in raw_kits
         ]
@@ -67,5 +65,5 @@ class Kit:
             "kitType": self.kit_type.value,
             "title": self.title,
             "description": self.description,
-            "imageUrl": self.image_url
+            "imageUrl": self.image_url,
         }
