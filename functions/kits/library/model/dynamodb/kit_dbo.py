@@ -4,7 +4,7 @@ from pynamodb.attributes import UnicodeAttribute
 from pynamodb.models import Model
 
 
-class KitRecordDbo(Model):
+class KitDbo(Model):
     """
     PynamoDB model to interact with DynamoDB
     """

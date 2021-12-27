@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 
 import boto3
 import logging
@@ -15,17 +15,12 @@ from functions.kits.library.model.kit_post_urls import KitPostUrls
 
 class KitService:
     @classmethod
-    def post_kit(cls, title: str, kit_type: KitType, description: str):
-        kit = Kit(
-            file_name=title.replace(" ", ""),
-            kit_type=kit_type,
-            title=title,
-            description=description
-        )
+    def post_kit(cls, title: str, kit_type: KitType, description: str) -> KitPostUrls:
+        kit = Kit.create(kit_type, title, description)
 
         KitGateway.persist_kit(kit)
 
-        kit_post_urls = KitPostUrls(
+        kit_post_urls = KitPostUrls.create(
             file_name=kit.file_name,
             image_presigned_url=cls._generate_put_presigned_url(kit, ContentType.JPEG, True),
             zip_presigned_url=cls._generate_put_presigned_url(kit, ContentType.ZIP)
@@ -34,12 +29,11 @@ class KitService:
         return kit_post_urls
 
     @staticmethod
-    def get_kits(kit_type: Optional[str] = None):
-        kits = KitGateway.get_kits(kit_type)
-        return kits
+    def get_kits(kit_type: KitType) -> List[Kit]:
+        return KitGateway.get_kits(kit_type)
 
     @staticmethod
-    def _generate_put_presigned_url(kit: Kit, content_type: ContentType, public: bool = False):
+    def _generate_put_presigned_url(kit: Kit, content_type: ContentType, public: bool = False) -> str:
         file_extension = FileExtension[content_type.name]
 
         request = {
@@ -52,6 +46,6 @@ class KitService:
         s3_client: BaseClient = boto3.client("s3")
         try:
             return s3_client.generate_presigned_url(ClientMethod="put_object", Params=request, ExpiresIn=1800)
-        except ClientError as e:
-            logging.error(e)
-            raise e
+        except ClientError as error:
+            logging.error(error)
+            raise error

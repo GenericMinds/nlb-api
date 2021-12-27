@@ -1,20 +1,18 @@
-from typing import List, Optional
+from typing import List
 
-from functions.kits.library.model.dynamodb.kit_record_dbo import KitRecordDbo
-from functions.kits.library.model.kit import Kit
+from functions.kits.library.model.dynamodb.kit_dbo import KitDbo
+from functions.kits.library.model.kit import Kit, KitType
 
 
 class KitGateway:
     "Gateway for operations from DynamoDB (wraps PynamoDB ORM)"
     @staticmethod
-    def get_kits(kit_type: Optional[str] = None) -> List[Kit]:
+    def get_kits(kit_type: KitType) -> List[Kit]:
         "Retrieve all kits based on kit type"
-        if kit_type:
-            filter_condition = KitRecordDbo.kit_type == kit_type
-        else:
-            filter_condition = None
 
-        raw_kits = KitRecordDbo.scan(filter_condition=filter_condition)
+        filter_condition = KitDbo.kit_type == kit_type if kit_type != KitType.NONE else None 
+
+        raw_kits = KitDbo.scan(filter_condition=filter_condition)
         records = [record for record in raw_kits]
         return Kit.from_raw_kit_record_dbos(records)
 
