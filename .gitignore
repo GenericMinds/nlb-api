@@ -1,4 +1,4 @@
-.idea
-.aws-sam/build
-.aws-sam/build.toml
+.chalice/deployments/
+.chalice/venv/
 .vscode
+.pytest_cache

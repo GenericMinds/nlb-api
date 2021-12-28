@@ -2,11 +2,12 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from functions.kits.library.types import Json
+from chalicelib.types import Json
 
 
 @dataclass
 class KitPostUrls:
+    "Represents a collective of presigned urls to upload kit assets to S3"
     file_name: str
     image_presigned_url: str
     zip_presigned_url: str

@@ -1,13 +1,12 @@
 from __future__ import annotations
-
 import os
 from dataclasses import dataclass
 from typing import List
-
-from functions.kits.library.enums import KitType
-from functions.kits.library.model.dynamodb.kit_dbo import KitDbo
-from functions.kits.library.types import Json
-
+from chalicelib.enums import ContentType, FileExtension, KitType
+from chalicelib.gateway.s3_gateway import S3Gateway
+from chalicelib.model.dynamodb.kit_dbo import KitDbo
+from chalicelib.model.kit_post_urls import KitPostUrls
+from chalicelib.types import Json
 
 @dataclass
 class Kit:
@@ -28,7 +27,7 @@ class Kit:
             "kit_type": kit_type,
             "title": title,
             "description": description,
-            "image_url": f"https://{os.environ['ASSET_BUCKET']}.s3.amazonaws.com/kits/{kit_type.value}/{file_name}/{file_name}.jpg",
+            "image_url": cls._get_image_url(kit_type, file_name),
         }
 
         return cls(**attributes)
@@ -47,8 +46,7 @@ class Kit:
     def from_raw_kit_dbos(cls, raw_kits: List[KitDbo]) -> List[Kit]:
         "Converts a list of KitDbos to a list of Kit instances"
         kits = [
-            cls(
-                file_name=raw_kit.file_name,
+            cls.create(
                 kit_type=KitType(raw_kit.kit_type),
                 title=raw_kit.title,
                 description=raw_kit.description,
@@ -57,6 +55,14 @@ class Kit:
         ]
 
         return kits
+
+    def to_post_urls(self) -> KitPostUrls:
+        "Transforms Kit to Post Urls for asset uploads"
+        return KitPostUrls.create(
+            file_name=self.file_name,
+            image_presigned_url=self._generate_put_presigned_url(ContentType.JPEG, True),
+            zip_presigned_url=self._generate_put_presigned_url(ContentType.ZIP),
+        )
 
     def to_json(self) -> Json:
         "Transforms Kit into json"
@@ -67,3 +73,21 @@ class Kit:
             "description": self.description,
             "imageUrl": self.image_url,
         }
+
+    def _generate_put_presigned_url(self, content_type: ContentType, public: bool = False) -> str:
+        "Generates a presigned url for the kit to upload assets to AssetBucket"
+        file_extension = FileExtension[content_type.name]
+
+        request = {
+            "Bucket": os.environ["ASSET_BUCKET"],
+            "Key": f"kits/{self.kit_type.value}/{self.file_name}/{self.file_name}.{file_extension.value}",
+            "ContentType": content_type.value,
+            "ACL": "public-read" if public else "private",
+        }
+
+        return S3Gateway.generate_presigned_url(request)
+
+    @staticmethod
+    def _get_image_url(kit_type: KitType, file_name: str) -> str:
+        "Generates the image url based on kit type and file name"
+        return f"https://{os.environ['ASSET_BUCKET']}.s3.amazonaws.com/kits/{kit_type.value}/{file_name}/{file_name}.jpg"

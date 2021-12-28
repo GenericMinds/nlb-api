@@ -14,3 +14,4 @@ class KitDbo(Model):
     kit_type = UnicodeAttribute()
     title = UnicodeAttribute()
     description = UnicodeAttribute()
+    # created_time = UTCDateTimeAttribute()

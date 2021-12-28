@@ -1,0 +1,26 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[packages]
+boto3 = "*"
+chalice = "*"
+pynamodb = "*"
+
+[dev-packages]
+pytest = "*"
+pytest-cov = "*"
+pytest-chalice = "*"
+mock = "*"
+behave = "*"
+black = "*"
+pylint = "*"
+isort = "*"
+
+
+[requires]
+python_version = "3.8"
+
+[pipenv]
+allow_prereleases = true

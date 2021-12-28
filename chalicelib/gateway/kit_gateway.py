@@ -1,8 +1,8 @@
 from typing import List
 
-from functions.kits.library.model.dynamodb.kit_dbo import KitDbo
-from functions.kits.library.model.kit import Kit, KitType
-
+from chalicelib.enums import KitType
+from chalicelib.model.kit import Kit
+from chalicelib.model.dynamodb.kit_dbo import KitDbo
 
 class KitGateway:
     "Gateway for operations from DynamoDB (wraps PynamoDB ORM)"
@@ -10,10 +10,10 @@ class KitGateway:
     @staticmethod
     def get_kits(kit_type: KitType) -> List[Kit]:
         "Retrieve all kits based on kit type"
-        filter_condition = KitDbo.kit_type == kit_type if kit_type != KitType.NONE else None
+        filter_condition = KitDbo.kit_type == kit_type.value if kit_type != KitType.NONE else None
 
         raw_kits_iterable = KitDbo.scan(filter_condition=filter_condition)
-        raw_kits = [raw_kit for raw_kit in raw_kits_iterable]
+        raw_kits = list(raw_kits_iterable)
         return Kit.from_raw_kit_dbos(raw_kits)
 
     @staticmethod
