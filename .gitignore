@@ -1,3 +1,6 @@
-.idea
-.aws-sam/build
-.aws-sam/build.toml
+.chalice/deployments/
+.chalice/deployed/
+.chalice/venv/
+.vscode
+.pytest_cache
+requirements.txt

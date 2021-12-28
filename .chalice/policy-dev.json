@@ -1,0 +1,34 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+      ],
+      "Resource": "arn:aws:logs:*:*:*",
+      "Effect": "Allow"
+    },
+    {
+      "Action": ["s3:GetObject", "s3:PutObject", "s3:PutObjectAcl"],
+      "Resource": "arn:aws:s3:::nlb-site-assets/*",
+      "Effect": "Allow",
+      "Sid": "AssetBucketPermissions"
+    },
+    {
+      "Action": [
+        "dynamodb:DescribeTable",
+        "dynamodb:PutItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:Query"
+      ],
+      "Resource": ["arn:aws:dynamodb:*:*:table/nlb-kits"],
+      "Effect": "Allow",
+      "Sid": "KitTablePermissions"
+    }
+  ]
+}
