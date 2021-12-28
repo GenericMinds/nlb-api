@@ -6,10 +6,8 @@ from datetime import datetime
 
 from pytz import timezone
 
-from chalicelib.enums import ContentType, FileExtension, KitType
-from chalicelib.gateway.s3_gateway import S3Gateway
+from chalicelib.enums import KitType
 from chalicelib.model.dynamodb.kit_dbo import KitDbo
-from chalicelib.model.kit_post_urls import KitPostUrls
 from chalicelib.types import Json
 
 
@@ -63,14 +61,6 @@ class Kit:
             created_date=raw_kit.created_date,
         )
 
-    def to_post_urls(self) -> KitPostUrls:
-        "Transforms Kit to Post Urls for asset uploads"
-        return KitPostUrls.create(
-            file_name=self.file_name,
-            image_presigned_url=self._generate_put_presigned_url(ContentType.JPEG, True),
-            zip_presigned_url=self._generate_put_presigned_url(ContentType.ZIP),
-        )
-
     def to_json(self) -> Json:
         "Transforms Kit into json"
         return {
@@ -81,19 +71,6 @@ class Kit:
             "imageUrl": self.image_url,
             "createdDate": f"{self.created_date}",
         }
-
-    def _generate_put_presigned_url(self, content_type: ContentType, public: bool = False) -> str:
-        "Generates a presigned url for the kit to upload assets to AssetBucket"
-        file_extension = FileExtension[content_type.name]
-
-        request = {
-            "Bucket": os.environ["ASSET_BUCKET"],
-            "Key": f"kits/{self.kit_type.value}/{self.file_name}/{self.file_name}.{file_extension.value}",
-            "ContentType": content_type.value,
-            "ACL": "public-read" if public else "private",
-        }
-
-        return S3Gateway.generate_presigned_url(request)
 
     @staticmethod
     def _get_image_url(kit_type: KitType, file_name: str) -> str:

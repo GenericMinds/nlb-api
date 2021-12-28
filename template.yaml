@@ -36,9 +36,13 @@ Resources:
       AttributeDefinitions:
         - AttributeName: file_name
           AttributeType: S
+        - AttributeName: created_date
+          AttributeType: S
       KeySchema:
         - AttributeName: file_name
           KeyType: HASH
+        - AttributeName: created_date
+          KeyType: RANGE
 
 ###############################################################################
 ### Outputs
