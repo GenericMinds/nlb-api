@@ -1,8 +1,9 @@
 from typing import List
 
 from chalicelib.enums import KitType
-from chalicelib.model.kit import Kit
 from chalicelib.model.dynamodb.kit_dbo import KitDbo
+from chalicelib.model.kit import Kit
+
 
 class KitGateway:
     "Gateway for operations from DynamoDB (wraps PynamoDB ORM)"

@@ -1,12 +1,15 @@
 from __future__ import annotations
+
 import os
 from dataclasses import dataclass
 from typing import List
+
 from chalicelib.enums import ContentType, FileExtension, KitType
 from chalicelib.gateway.s3_gateway import S3Gateway
 from chalicelib.model.dynamodb.kit_dbo import KitDbo
 from chalicelib.model.kit_post_urls import KitPostUrls
 from chalicelib.types import Json
+
 
 @dataclass
 class Kit:

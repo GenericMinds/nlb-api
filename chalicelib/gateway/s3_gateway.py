@@ -1,9 +1,12 @@
 import logging
 from typing import Any, Mapping
-import boto3
-from botocore.exceptions import ClientError
-from botocore.client import BaseClient
 
+import boto3
+from botocore.client import BaseClient
+from botocore.exceptions import ClientError
+
+
+# pylint: disable=too-few-public-methods
 class S3Gateway:
     "Gateway for operations from S3"
 
