@@ -1,4 +1,6 @@
 .chalice/deployments/
+.chalice/deployed/
 .chalice/venv/
 .vscode
 .pytest_cache
+requirements.txt

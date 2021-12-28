@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass
-from typing import List
+from datetime import datetime
+
+from pytz import timezone
 
 from chalicelib.enums import ContentType, FileExtension, KitType
 from chalicelib.gateway.s3_gateway import S3Gateway
@@ -19,6 +21,7 @@ class Kit:
     title: str
     description: str
     image_url: str
+    created_date: datetime
 
     @classmethod
     def create(cls, kit_type: KitType, title: str, description: str) -> Kit:
@@ -31,6 +34,7 @@ class Kit:
             "title": title,
             "description": description,
             "image_url": cls._get_image_url(kit_type, file_name),
+            "created_date": datetime.now(tz=timezone("UTC")),
         }
 
         return cls(**attributes)
@@ -42,22 +46,22 @@ class Kit:
         raw_kit_dbo.kit_type = self.kit_type.value
         raw_kit_dbo.title = self.title
         raw_kit_dbo.description = self.description
-
+        raw_kit_dbo.created_date = self.created_date
         return raw_kit_dbo
 
     @classmethod
-    def from_raw_kit_dbos(cls, raw_kits: List[KitDbo]) -> List[Kit]:
-        "Converts a list of KitDbos to a list of Kit instances"
-        kits = [
-            cls.create(
-                kit_type=KitType(raw_kit.kit_type),
-                title=raw_kit.title,
-                description=raw_kit.description,
-            )
-            for raw_kit in raw_kits
-        ]
+    def from_raw_kit_dbo(cls, raw_kit: KitDbo) -> Kit:
+        "Converts a KitDbo to a Kit"
+        kit_type = KitType(raw_kit.kit_type)
 
-        return kits
+        return cls(
+            file_name=raw_kit.file_name,
+            kit_type=kit_type,
+            title=raw_kit.title,
+            description=raw_kit.description,
+            image_url=cls._get_image_url(kit_type, raw_kit.file_name),
+            created_date=raw_kit.created_date,
+        )
 
     def to_post_urls(self) -> KitPostUrls:
         "Transforms Kit to Post Urls for asset uploads"
@@ -75,6 +79,7 @@ class Kit:
             "title": self.title,
             "description": self.description,
             "imageUrl": self.image_url,
+            "createdDate": f"{self.created_date}",
         }
 
     def _generate_put_presigned_url(self, content_type: ContentType, public: bool = False) -> str:

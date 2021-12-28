@@ -35,7 +35,7 @@ Resources:
       BillingMode: PAY_PER_REQUEST
       AttributeDefinitions:
         - AttributeName: file_name
-          AttributeType: String
+          AttributeType: S
       KeySchema:
         - AttributeName: file_name
           KeyType: HASH
@@ -50,8 +50,8 @@ Outputs:
   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
 
   KitTable:
-    Description: "Kit dynamodb table ARN"
+    Description: 'Kit dynamodb table ARN'
     Value: !GetAtt KitTable.Arn
   AssetBucket:
-    Description: "Asset bucket ARN"
+    Description: 'Asset bucket ARN'
     Value: !GetAtt AssetBucket.Arn

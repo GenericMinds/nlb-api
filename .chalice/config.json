@@ -4,7 +4,11 @@
   "stages": {
     "dev": {
       "api_gateway_stage": "api",
-      "autogen_policy": false
+      "autogen_policy": false,
+      "environment_variables": {
+        "KIT_TABLE": "nlb-kits",
+        "ASSET_BUCKET": "nlb-site-assets"
+      }
     }
   }
 }
