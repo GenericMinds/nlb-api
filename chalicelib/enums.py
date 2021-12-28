@@ -8,16 +8,20 @@ from chalice.app import Request
 from chalicelib.utils import get_query_params
 
 
+
 class ContentType(Enum):
     "Represents content types"
     ZIP = "application/x-zip-compressed"
     JPEG = "image/jpeg"
 
 
+
 class FileExtension(Enum):
     "Represents file extensions"
     ZIP = "zip"
     JPEG = "jpg"
+
+
 
 
 class KitType(Enum):
