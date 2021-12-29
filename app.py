@@ -3,7 +3,7 @@ from chalice import Chalice
 from chalicelib.enums import KitType
 from chalicelib.service.kit_service import KitService
 from chalicelib.types import ApiResponse
-from chalicelib.utils import get_body
+from chalicelib.utils import get_body, get_query_params
 
 app = Chalice(app_name="nlb-api")
 app.debug = True
@@ -29,7 +29,9 @@ def post_kit() -> ApiResponse:
 def get_kits() -> ApiResponse:
     "Endpoint to get kits"
     kit_type = KitType.from_request(app.current_request)
-    response = KitService.get_kits(kit_type)
+    title = get_query_params(app.current_request).get("title")
+
+    response = KitService.get_kits(kit_type, title)
     return response.to_json()
 
 

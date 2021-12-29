@@ -1,5 +1,6 @@
-from typing import List
+from typing import List, Optional
 
+from pynamodb.expressions.condition import Comparison
 from pynamodb.pagination import ResultIterator
 
 from chalicelib.enums import KitType
@@ -11,10 +12,16 @@ class KitGateway:
     "Gateway for operations from DynamoDB (wraps PynamoDB ORM)"
 
     @classmethod
-    def get_kits(cls, kit_type: KitType) -> List[Kit]:
-        "Retrieve all kits based on kit type"
-        filter_condition = KitDbo.kit_type == kit_type.value if kit_type != KitType.NONE else None
-        raw_kits_iterable = KitDbo.scan(filter_condition=filter_condition)
+    def get_kits(cls, kit_type: KitType, title: Optional[str]) -> List[Kit]:
+        "Retrieve all kits based on query params kit type and title"
+        condition: Comparison = None
+        if kit_type != KitType.NONE:
+            condition &= KitDbo.kit_type == kit_type.value
+
+        if title:
+            condition &= KitDbo.title.contains(title)
+
+        raw_kits_iterable = KitDbo.scan(filter_condition=condition)
         return cls._get_kits_from_raw_kit_iterable(raw_kits_iterable)
 
     @classmethod

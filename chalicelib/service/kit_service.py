@@ -1,4 +1,5 @@
 import os
+from typing import Optional
 
 from chalicelib.enums import ContentType, FileExtension, KitType
 from chalicelib.gateway.kit_gateway import KitGateway
@@ -28,14 +29,16 @@ class KitService:
         )
 
     @staticmethod
-    def get_kits(kit_type: KitType) -> GetKitsResponse:
+    def get_kits(kit_type: KitType, title: Optional[str]) -> GetKitsResponse:
         """
         Gets kits from dynamodb
 
-        Filterable by kit type
+        Filterable by:
+        - kit type
+        - title
         """
 
-        kits = KitGateway.get_kits(kit_type)
+        kits = KitGateway.get_kits(kit_type, title)
         return GetKitsResponse.create(kits)
 
     @staticmethod
