@@ -21,6 +21,10 @@ class Kit:
     image_url: str
     created_date: datetime
 
+    def __lt__(self, other: Kit):
+        "Sortes kits by created_date"
+        return self.created_date < other.created_date
+
     @classmethod
     def create(cls, kit_type: KitType, title: str, description: str) -> Kit:
         "Creates a Kit"

@@ -35,13 +35,18 @@ Resources:
       AttributeDefinitions:
         - AttributeName: file_name
           AttributeType: S
-        - AttributeName: created_date
+        - AttributeName: kit_type
           AttributeType: S
       KeySchema:
         - AttributeName: file_name
           KeyType: HASH
-        - AttributeName: created_date
-          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: kit-type-index
+          KeySchema:
+            - AttributeName: kit_type
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
 
 ###############################################################################
 ### Outputs

@@ -15,22 +15,23 @@ class KitGateway:
     def get_kits(cls, kit_type: KitType, title: Optional[str]) -> List[Kit]:
         "Retrieve all kits based on query params kit type and title"
         condition: Comparison = None
-        if kit_type != KitType.NONE:
-            condition &= KitDbo.kit_type == kit_type.value
-
         if title:
             condition &= KitDbo.title.contains(title)
 
-        raw_kits_iterable = KitDbo.scan(filter_condition=condition)
+        if kit_type != KitType.NONE:
+            raw_kits_iterable = KitDbo.kit_type_index.query(hash_key=kit_type.value, filter_condition=condition)
+        else:
+            raw_kits_iterable = KitDbo.scan(filter_condition=condition)
         return cls._get_kits_from_raw_kit_iterable(raw_kits_iterable)
 
     @classmethod
     def get_recent_kits(cls) -> List[Kit]:
         "Retrieves the top 10 newest kits"
-        # pylint: disable=fixme
-        # TODO: Comeback and make this grab the latest ten kits
-        raw_kits_iterable = KitDbo.scan(limit=10)
-        return cls._get_kits_from_raw_kit_iterable(raw_kits_iterable)
+        raw_kits_iterable = KitDbo.scan()
+        kits = cls._get_kits_from_raw_kit_iterable(raw_kits_iterable)
+        newest_to_oldest_kits = sorted(kits, reverse=True)
+        most_recent_ten_kits = newest_to_oldest_kits[:10]
+        return most_recent_ten_kits
 
     @staticmethod
     def persist_kit(kit: Kit) -> None:

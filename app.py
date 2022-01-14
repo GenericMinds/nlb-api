@@ -35,6 +35,16 @@ def get_kits() -> ApiResponse:
     return response.to_json()
 
 
+# @app.route("/kit", methods=["GET"], cors=True)
+# def get_kit() -> ApiResponse:
+#     "Endpoint to get kits"
+#     kit_type = KitType.from_request(app.current_request)
+#     title = get_query_params(app.current_request).get("title")
+
+#     response = KitService.get_kits(kit_type, title)
+#     return response.to_json()
+
+
 @app.route("/kits/recent", methods=["GET"], cors=True)
 def get_recent_kits() -> ApiResponse:
     "Endpoint to get 10 most recent kits"
